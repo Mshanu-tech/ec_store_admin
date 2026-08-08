@@ -135,11 +135,40 @@ export default function Products() {
         <button onClick={openCreate} className="btn-primary"><FaPlus size={12} /> Add Product</button>
       </div>
 
-      <div className="card overflow-x-auto">
-        <table className="w-full text-sm">
+      {/* Mobile: stacked cards */}
+      <div className="grid gap-3 md:hidden">
+        {products.map((p) => (
+          <div key={p._id} className="card p-4 flex gap-3">
+            {p.images?.[0] ? (
+              <img src={p.images[0]} alt={p.name} className="h-14 w-14 rounded-lg object-cover shrink-0" />
+            ) : (
+              <div className="h-14 w-14 rounded-lg bg-gray-100 shrink-0" />
+            )}
+            <div className="min-w-0 flex-1">
+              <div className="flex items-start justify-between gap-2">
+                <p className="font-semibold truncate">{p.name}</p>
+                <span className={`badge shrink-0 ${p.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
+                  {p.isActive ? "Active" : "Hidden"}
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 mt-0.5">{p.category?.name}</p>
+              <p className="text-sm font-medium mt-1">₹{p.priceOptions[0]?.price} <span className="text-gray-400 font-normal">({p.priceOptions[0]?.weight})</span></p>
+              <div className="flex gap-4 mt-2">
+                <button onClick={() => openEdit(p)} className="text-primary text-sm font-semibold flex items-center gap-1"><FaEdit /> Edit</button>
+                <button onClick={() => remove(p._id)} className="text-red-400 text-sm font-semibold flex items-center gap-1"><FaTrash /> Delete</button>
+              </div>
+            </div>
+          </div>
+        ))}
+        {products.length === 0 && <div className="card p-8 text-center text-gray-400 text-sm">No products found</div>}
+      </div>
+
+      {/* Desktop: table */}
+      <div className="card overflow-x-auto hidden md:block">
+        <table className="w-full text-sm min-w-[640px]">
           <thead>
             <tr className="text-left text-gray-400 border-b">
-              <th className="p-4">Name</th><th>Category</th><th>Price</th><th>Status</th><th></th>
+              <th className="p-4">Name</th><th className="p-4">Category</th><th className="p-4">Price</th><th className="p-4">Status</th><th className="p-4"></th>
             </tr>
           </thead>
           <tbody>
@@ -155,19 +184,22 @@ export default function Products() {
                     <span className="font-medium">{p.name}</span>
                   </div>
                 </td>
-                <td>{p.category?.name}</td>
-                <td>₹{p.priceOptions[0]?.price} ({p.priceOptions[0]?.weight})</td>
-                <td>
+                <td className="p-4">{p.category?.name}</td>
+                <td className="p-4 whitespace-nowrap">₹{p.priceOptions[0]?.price} ({p.priceOptions[0]?.weight})</td>
+                <td className="p-4">
                   <span className={`badge ${p.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
                     {p.isActive ? "Active" : "Hidden"}
                   </span>
                 </td>
-                <td className="p-4 flex gap-3">
-                  <button onClick={() => openEdit(p)} className="text-primary"><FaEdit /></button>
-                  <button onClick={() => remove(p._id)} className="text-red-400"><FaTrash /></button>
+                <td className="p-4">
+                  <div className="flex gap-3">
+                    <button onClick={() => openEdit(p)} className="text-primary"><FaEdit /></button>
+                    <button onClick={() => remove(p._id)} className="text-red-400"><FaTrash /></button>
+                  </div>
                 </td>
               </tr>
             ))}
+            {products.length === 0 && <tr><td colSpan={5} className="p-8 text-center text-gray-400">No products found</td></tr>}
           </tbody>
         </table>
       </div>
